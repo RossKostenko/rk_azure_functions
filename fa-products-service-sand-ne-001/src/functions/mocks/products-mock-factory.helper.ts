@@ -10,7 +10,7 @@ export function productsMockFactory(ammount?: number): Product[] {
 	return collection;
 }
 
-function singleProductFactory(index?: number): Product {
+export function singleProductFactory(index?: number): Product {
 	const uniqueText = index ? ` ${index}` : '';
 	const addedPrice = index ? index : 0;
 
