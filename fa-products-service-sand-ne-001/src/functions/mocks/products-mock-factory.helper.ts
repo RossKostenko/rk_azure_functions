@@ -21,14 +21,3 @@ export function singleProductFactory(id: number): Product {
 		price: 20 + addedPrice,
 	}
 }
-
-function generateBillionId(): string {
-	let result = '';
-	const characters = '0123456789';
-
-	for (let i = 0; i < 12; i++) {
-		result += characters.charAt(Math.floor(Math.random() * characters.length));
-	}
-
-	return result;
-}
