@@ -10,12 +10,12 @@ export function productsMockFactory(ammount?: number): Product[] {
 	return collection;
 }
 
-export function singleProductFactory(index?: number): Product {
-	const uniqueText = index ? ` ${index}` : '';
-	const addedPrice = index ? index : 0;
+export function singleProductFactory(id: number): Product {
+	const uniqueText = id ? ` ${id}` : '';
+	const addedPrice = id ? id : 0;
 
 	return {
-		id: generateBillionId(),
+		id: String(id),
 		title: 'Test Product' + uniqueText,
 		description: 'Test Product' + uniqueText + ' description',
 		price: 20 + addedPrice,
