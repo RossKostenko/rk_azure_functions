@@ -27,7 +27,7 @@ export async function httpGetProductById(request: HttpRequest, context: Invocati
 };
 
 app.http('http-get-product-by-id', {
-    route: '/products/{productId}',
+    route: 'products/{productId}',
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: httpGetProductById

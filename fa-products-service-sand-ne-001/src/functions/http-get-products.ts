@@ -17,7 +17,7 @@ export async function httpGetProducts(request: HttpRequest, context: InvocationC
 };
 
 app.http('http-get-products', {
-    route: '/products',
+    route: 'products',
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: httpGetProducts
