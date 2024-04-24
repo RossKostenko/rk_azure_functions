@@ -4,3 +4,11 @@ export type Product = {
 	description: string;
 	price: number;
 }
+
+export type ProductWithCount = {
+	id: string;
+	count: number;
+	title: string;
+	description: string;
+	price: number;
+}

@@ -1,15 +1,30 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { productsMockFactory } from './mocks/products-mock-factory.helper'
+import { CosmosClient } from "@azure/cosmos";
+import { Product, Stock } from "./models";
 
-const MOCK_PRODUCTS_AMMOUT = 10;
+const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
+const client = new CosmosClient(connectionString);
+const database = client.database("products-db");
+const productsContainer = database.container("products");
+const stocksContainer = database.container("stocks");
 
 export async function httpGetProducts(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
 
-    const products = productsMockFactory(MOCK_PRODUCTS_AMMOUT)
+    const { resources: products } = await productsContainer.items.query<Product>("SELECT * FROM c").fetchAll();
+    const { resources: stocks } = await stocksContainer.items.query<Stock>("SELECT * FROM c").fetchAll();
+
+    const productsWithCount = products.map((product) => {
+        const count = stocks?.find((stock) => stock.id === product.id)?.count ?? 0
+
+        return {
+            ...product,
+            count
+        }
+    })
 
     return {
-        body: JSON.stringify(products),
+        body: JSON.stringify(productsWithCount),
         headers: {
             'Content-Type': 'application/json'
         }

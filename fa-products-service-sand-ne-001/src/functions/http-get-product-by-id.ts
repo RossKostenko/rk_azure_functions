@@ -1,25 +1,29 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { singleProductFactory } from "./mocks";
+
+import { CosmosClient } from "@azure/cosmos";
+import { Product, Stock } from "./models";
+
+const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
+const client = new CosmosClient(connectionString);
+const database = client.database("products-db");
+const productContainer = database.container("products");
+const stockContainer = database.container("stocks");
 
 export async function httpGetProductById(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     context.log(`Http function processed request for url "${request.url}"`);
 
-    const productId = parseInt(request.params.productId, 10);
+    const productId = request.params.productId;
 
-    if (isNaN(productId)) {
-        return {
-            status: 400,
-            body: "Product ID must be a number.",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
+    const { resource: product } = await productContainer.item(productId).read<Product>();
+    const { resource: stock } = await stockContainer.item(productId).read<Stock>();
+
+    const productWithCount = {
+        ...product,
+        count: stock.count ?? 0
     }
 
-    const product = singleProductFactory(productId);
-
     return {
-        body: JSON.stringify(product),
+        body: JSON.stringify(productWithCount),
         headers: {
             'Content-Type': 'application/json'
         }
